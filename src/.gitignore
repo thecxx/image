@@ -1,0 +1,9 @@
+*.ncb
+*.suo
+*.vcproj*
+!*.vcproj
+
+debug/
+release/
+
+/lib/*.lib
