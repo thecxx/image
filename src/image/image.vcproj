@@ -135,6 +135,7 @@
 				Name="VCLibrarianTool"
 				OutputFile="$(SolutionDir)\lib\image.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib&quot;"
+				IgnoreAllDefaultLibraries="false"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -184,30 +185,30 @@
 					Name="x86"
 					>
 					<File
-						RelativePath=".\GetModuleFileNameA.asm"
+						RelativePath=".\traps\GetModuleFileNameA.asm"
 						>
 					</File>
 					<File
-						RelativePath=".\GetModuleFileNameW.asm"
+						RelativePath=".\traps\GetModuleFileNameW.asm"
 						>
 					</File>
 					<File
-						RelativePath=".\GetModuleHandleA.asm"
+						RelativePath=".\traps\GetModuleHandleA.asm"
 						>
 					</File>
 					<File
-						RelativePath=".\GetModuleHandleW.asm"
+						RelativePath=".\traps\GetModuleHandleW.asm"
 						>
 					</File>
 					<File
-						RelativePath=".\GetProcAddress.asm"
+						RelativePath=".\traps\GetProcAddress.asm"
 						>
 					</File>
 					<Filter
 						Name="inc"
 						>
 						<File
-							RelativePath=".\stub.inc"
+							RelativePath=".\traps\trap.inc"
 							>
 						</File>
 					</Filter>
@@ -232,7 +233,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\stub.h"
+				RelativePath=".\trap.h"
 				>
 			</File>
 		</Filter>

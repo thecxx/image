@@ -1,9 +1,9 @@
-;EasyCodeName=GetModuleFileNameWStub,1
+;EasyCodeName=GetModuleFileNameA,1
 .386
 .Model flat, StdCall
 Option CaseMap: none
 
-Include	stub.inc
+Include	trap.inc
 
 .Const
 
@@ -13,7 +13,7 @@ Include	stub.inc
 
 .Code
 
-GetModuleFileNameWStub Proc Uses Ebx Ecx Edx Esi Edi, hModule:DWord, lpFilename: Ptr WCHAR, nSize:DWord
+GetModuleFileNameATrap Proc Uses Ebx Ecx Edx Esi Edi, hModule:DWord, lpFilename: Ptr CHAR, nSize:DWord
 	; Mov Esi, 0x********
 	Mov_Esi_Information
 	;// Pointer to ImageInformation
@@ -25,21 +25,21 @@ GetModuleFileNameWStub Proc Uses Ebx Ecx Edx Esi Edi, hModule:DWord, lpFilename:
 		Mov Ebx, Esi
 		Assume Ebx: Ptr ImageInformation
 
-		Lea Esi, [Ebx].ModulePathW
+		Lea Esi, [Ebx].ModulePathA
 		Mov Edi, lpFilename
 		Mov Ecx, nSize
 		Cld
-		Rep Movsw
+		Rep Movsb
 
 		Mov Eax, [Ebx].LengthOfPath
 	.Else
 		Push nSize
 		Push lpFilename
 		Push hModule
-		Call [Esi].stubs[SizeOf ImageStub * STUB_ID_GET_MODULE_FILE_NAME_W].procedure
+		Call [Esi].traps[SizeOf ImageTrap * TRAP_ID_GET_MODULE_FILE_NAME_A].procedure
 	.EndIf
 
 	Return Eax
-GetModuleFileNameWStub EndP
+GetModuleFileNameATrap EndP
 
 End

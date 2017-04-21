@@ -3,7 +3,7 @@
 #include "image.h"
 #include "mm.h"
 #include "pe.h"
-#include "stub.h"
+#include "trap.h"
 
 bool image_init(__out image_information *info,
 				__in pvoid buffer,
@@ -32,7 +32,7 @@ bool image_init(__out image_information *info,
 		return false;
 	}
 
-	if(!image_init_stubs(info)) {
+	if(!image_init_traps(info)) {
 		return false;
 	}
 
@@ -51,20 +51,20 @@ bool image_init_apis(__in image_information *info)
 	return true;
 }
 
-bool image_init_stubs(__in image_information *info)
+bool image_init_traps(__in image_information *info)
 {
 	uint id;
-	stub_record *record = stubs();
+	trap_record *record = traps();
 
 	while(record->proc) {
 		id = record->id;
-		if(id >= IMAGE_STUB_MAX) {
+		if(id >= IMAGE_TRAP_MAX) {
 			return false;
 		}
 
-		info->stubs[id].proc = record->proc;
-		info->stubs[id].stub = record->stub;
-		info->stubs[id].size = record->size;
+		info->traps[id].proc = record->proc;
+		info->traps[id].trap = record->trap;
+		info->traps[id].size = record->size;
 
 		record += 1;
 	}
@@ -78,15 +78,15 @@ pvoid image_load(__in image_information *info)
 	DWORD time;
 	dllmain_t dllmain;
 
-	for(i = 0; i < IMAGE_STUB_MAX; i++) {
-		if(info->stubs[i].proc == null) {
+	for(i = 0; i < IMAGE_TRAP_MAX; i++) {
+		if(info->traps[i].proc == null) {
 			break;
 		}
 	}
 
 	// 计算需要内存大小
 	info->imagesize = image_sizeof(info->in.buffer);
-	info->size		= (sizeof(image_information) - sizeof(image_stub_text)) + (sizeof(image_stub_text) * i);
+	info->size		= (sizeof(image_information) - sizeof(image_trap_text)) + (sizeof(image_trap_text) * i);
 
 	// alloc memory
 	info->imagebase = info->mm.malloc(info->imagesize + info->size);
@@ -120,8 +120,8 @@ pvoid image_load(__in image_information *info)
 	info->LengthOfName = (ulong)strlen(& info->modulename.A[0]);
 	info->LengthOfPath = (ulong)strlen(& info->modulepath.A[0]);
 
-	// copy stubs
-	image_copy_stubs(info);
+	// copy traps
+	image_copy_traps(info);
 
 	//////////////////////////////////////////////////////////////////////////
 	// copy image
@@ -180,18 +180,18 @@ pvoid image_copy_im(__in image_information *info)
 
 }
 
-void image_copy_stubs(__in image_information *info)
+void image_copy_traps(__in image_information *info)
 {
 	uint i;
-	for(i = 0; i < IMAGE_STUB_MAX; i++) {
-		if(info->stubs[i].proc == null) {
+	for(i = 0; i < IMAGE_TRAP_MAX; i++) {
+		if(info->traps[i].proc == null) {
 			break;
 		}
-		RtlMoveMemory(& info->text[i], info->stubs[i].stub, info->stubs[i].size);
-		// Update stub pointer
-		info->stubs[i].stub = (pvoid)& info->text[i];
+		RtlMoveMemory(& info->text[i], info->traps[i].trap, info->traps[i].size);
+		// Update trap pointer
+		info->traps[i].trap = (pvoid)& info->text[i];
 		// Set information
-		stub_mov_esi(info->stubs[i].stub, info);
+		trap_mov_esi(info->traps[i].trap, info);
 	}
 }
 
@@ -294,11 +294,11 @@ bool image_fix_import(__in pvoid addr, __in image_information *info)
 				}
 
 				if(FunctionAddr) {
-					for(i = 0; i < IMAGE_STUB_MAX; i++) {
-						if(info->stubs[i].proc == null) {
+					for(i = 0; i < IMAGE_TRAP_MAX; i++) {
+						if(info->traps[i].proc == null) {
 							break;
-						} else if(info->stubs[i].proc == FunctionAddr) {
-							FunctionAddr = info->stubs[i].stub;
+						} else if(info->traps[i].proc == FunctionAddr) {
+							FunctionAddr = info->traps[i].trap;
 							break;
 						}
 					}
@@ -361,12 +361,12 @@ bool image_fix_import_for(__in pvoid hModule, __in image_information *info)
 				FunctionName = (LPCSTR) &(((PIMAGE_IMPORT_BY_NAME)((puchar)hModule + OriginTable[index].u1.AddressOfData))->Name[0]);
 			}
 
-			for(i = 0; i < IMAGE_STUB_MAX; i++) {
-				if(info->stubs[i].proc == null) {
+			for(i = 0; i < IMAGE_TRAP_MAX; i++) {
+				if(info->traps[i].proc == null) {
 					break;
-				} else if(info->stubs[i].proc == FunctionAddr) {
+				} else if(info->traps[i].proc == FunctionAddr) {
 					mm_protect(& FuncTable[index].u1.Function, sizeof(pvoid), PAGE_EXECUTE_READWRITE, & OldProtect);
-					FuncTable[index].u1.Function = (ulong)(_W64 ulong)info->stubs[i].stub;
+					FuncTable[index].u1.Function = (ulong)(_W64 ulong)info->traps[i].trap;
 					mm_protect(& FuncTable[index].u1.Function, sizeof(pvoid), OldProtect, null);
 
 					image_hook_push(info, (pvoid*)& FuncTable[index].u1.Function, FunctionAddr);

@@ -1,9 +1,9 @@
-;EasyCodeName=GetModuleHandleWStub,1
+;EasyCodeName=GetModuleHandleA,1
 .386
 .Model flat, StdCall
 Option CaseMap: none
 
-Include	stub.inc
+Include	trap.inc
 
 .Const
 
@@ -13,7 +13,7 @@ Include	stub.inc
 
 .Code
 
-GetModuleHandleWStub Proc Uses Ebx Ecx Edx Esi Edi, lpModuleName: Ptr WCHAR
+GetModuleHandleATrap Proc Uses Ebx Ecx Edx Esi Edi, lpModuleName: Ptr CHAR
 	; Mov Esi, 0x********
 	Mov_Esi_Information
 	; Pointer to ImageInformation
@@ -21,20 +21,20 @@ GetModuleHandleWStub Proc Uses Ebx Ecx Edx Esi Edi, lpModuleName: Ptr WCHAR
 
 	.If lpModuleName == 0
 		Push 0
-		Call [Esi].stubs[SizeOf ImageStub * STUB_ID_GET_MODULE_HANDLE_W].procedure
+		Call [Esi].traps[SizeOf ImageTrap * TRAP_ID_GET_MODULE_HANDLE_A].procedure
 	.Else
-		Lea Ebx, [Esi].ModuleNameW
+		Lea Ebx, [Esi].ModuleNameA
 		Push Ebx
 		Push lpModuleName
-		Call [Esi].apis.lstrcmpiW
+		Call [Esi].apis.lstrcmpiA
         
         Cmp Eax, 0
         Je __COPY
 		
-		Lea Ebx, [Esi].ModuleBaseNameW
+		Lea Ebx, [Esi].ModuleBaseNameA
 		Push Ebx
 		Push lpModuleName
-		Call [Esi].apis.lstrcmpiW   
+		Call [Esi].apis.lstrcmpiA        
         
         Cmp Eax, 0
         Jne __CALL
@@ -45,11 +45,11 @@ GetModuleHandleWStub Proc Uses Ebx Ecx Edx Esi Edi, lpModuleName: Ptr WCHAR
 
     __CALL:    
         Push lpModuleName
-        Call [Esi].stubs[SizeOf ImageStub * STUB_ID_GET_MODULE_HANDLE_W].procedure
+        Call [Esi].traps[SizeOf ImageTrap * TRAP_ID_GET_MODULE_HANDLE_A].procedure
 	@@:
 	.EndIf
 
 	Return Eax
-GetModuleHandleWStub EndP
+GetModuleHandleATrap EndP
 
 End

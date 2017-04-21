@@ -3,7 +3,7 @@
 .Model flat, StdCall
 Option CaseMap: none
 
-Include	stub.inc
+Include	trap.inc
 
 .Const
 
@@ -13,13 +13,13 @@ Include	stub.inc
 
 .Code
 
-GetProcAddressStub Proc Uses Ebx Ecx Edx Edi Esi hModule:DWord, lpProcName: Ptr CHAR
+GetProcAddressTrap Proc Uses Ebx Ecx Edx Edi Esi hModule:DWord, lpProcName: Ptr CHAR
 	; Mov Esi, 0x********
 	Mov_Esi_Information
 	; Pointer to ImageInformation
 	Assume Esi: Ptr ImageInformation
 
-	Mov Eax, [Esi].stubs[SizeOf ImageStub * STUB_ID_GET_PROC_ADDRESS].procedure
+	Mov Eax, [Esi].traps[SizeOf ImageTrap * TRAP_ID_GET_PROC_ADDRESS].procedure
 	Push lpProcName
 	Push hModule
 	Call Eax
@@ -31,21 +31,21 @@ GetProcAddressStub Proc Uses Ebx Ecx Edx Edi Esi hModule:DWord, lpProcName: Ptr 
 
 			Push Eax
 
-			Lea Ebx, [Esi].stubs[0]
-			Mov Eax, SizeOf ImageStub
+			Lea Ebx, [Esi].traps[0]
+			Mov Eax, SizeOf ImageTrap
 			Mul Ecx
 			Add Ebx, Eax
 
 			Pop Eax
 
-			Assume Ebx: Ptr ImageStub
+			Assume Ebx: Ptr ImageTrap
 
 			.If [Ebx].procedure == 0
 				.Break
 			.EndIf
 
 			.If [Ebx].procedure == Eax
-				Mov Eax, [Ebx].stub
+				Mov Eax, [Ebx].trap
 				.Break
 			.EndIf
 
@@ -54,6 +54,6 @@ GetProcAddressStub Proc Uses Ebx Ecx Edx Edi Esi hModule:DWord, lpProcName: Ptr 
 	.EndIf
 
 	Return Eax
-GetProcAddressStub EndP
+GetProcAddressTrap EndP
 
 End

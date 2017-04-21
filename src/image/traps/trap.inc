@@ -1,7 +1,7 @@
-; __stub_header__
+; __trap_header__
 
-IFNDEF 	 STUB_INC
-STUB_INC Equ <1>
+IFNDEF 	 TRAP_INC
+TRAP_INC Equ <1>
 
 CHAR 	TypeDef Byte
 WCHAR 	TypeDef Word
@@ -24,17 +24,17 @@ Return Macro x: = < Eax >
 	End_Flags
 EndM
 
-STUB_ID_GET_MODULE_HANDLE_A		Equ <0>
-STUB_ID_GET_MODULE_HANDLE_W		Equ <1>
-STUB_ID_GET_MODULE_FILE_NAME_A	Equ <2>
-STUB_ID_GET_MODULE_FILE_NAME_W	Equ <3>
-STUB_ID_GET_PROC_ADDRESS		Equ <4>
+TRAP_ID_GET_MODULE_HANDLE_A		Equ <0>
+TRAP_ID_GET_MODULE_HANDLE_W		Equ <1>
+TRAP_ID_GET_MODULE_FILE_NAME_A	Equ <2>
+TRAP_ID_GET_MODULE_FILE_NAME_W	Equ <3>
+TRAP_ID_GET_PROC_ADDRESS		Equ <4>
 
-ImageStub Struct
+ImageTrap Struct
 	procedure DWord ?
-	stub 	  DWord ?
+	trap 	  DWord ?
 	nSize	  DWord ?
-ImageStub EndS
+ImageTrap EndS
 
 ImageApis Struct
 	MessageBoxA DWord Ptr ?
@@ -61,7 +61,7 @@ ImageInformation Struct
 	LengthOfPath DWord ?
 
 	apis  ImageApis <?, ?, ?, ?>
-	stubs ImageStub 20 Dup(<?, ?, ?>)
+	traps ImageTrap 20 Dup(<?, ?, ?>)
 
 ImageInformation EndS
 

@@ -59,8 +59,8 @@ typedef unsigned long		ulong,  *pulong;
 #define PAGE_SIZE	4096
 #endif
 
-#define IMAGE_STUB_MAX			20
-#define IMAGE_STUB_TEXT_SIZE	256
+#define IMAGE_TRAP_MAX			20
+#define IMAGE_TRAP_TEXT_SIZE	256
 
 typedef pvoid (__syscall *malloc_t)	(ulong);
 typedef void  (__syscall *free_t)	(pvoid);
@@ -80,15 +80,15 @@ typedef struct _image_hook {
 	pvoid  function;
 } image_hook;
 
-typedef struct _image_stub {
+typedef struct _image_trap {
 	pvoid proc;
-	pvoid stub;
+	pvoid trap;
 	ulong size;
-} image_stub;
+} image_trap;
 
-typedef struct _image_stub_text {
-	byte text[IMAGE_STUB_TEXT_SIZE];
-} image_stub_text;
+typedef struct _image_trap_text {
+	byte text[IMAGE_TRAP_TEXT_SIZE];
+} image_trap_text;
 
 typedef struct _image_information {
 
@@ -120,8 +120,8 @@ typedef struct _image_information {
 	// sys apis
 	image_apis apis;
 
-	// stubs
-	image_stub stubs[IMAGE_STUB_MAX];
+	// traps
+	image_trap traps[IMAGE_TRAP_MAX];
 
 	// hooks
 	image_hook	*hook;
@@ -139,7 +139,7 @@ typedef struct _image_information {
 	} in;
 
 	// 中间过程代码存储
-	image_stub_text text[1];
+	image_trap_text text[1];
 
 } image_information;
 
@@ -159,7 +159,7 @@ bool				image_init				(__out image_information *info, __in pvoid buffer, __in ul
 pvoid				image_load				(__in image_information *info);
 
 bool				image_init_apis			(__in image_information *info);
-bool				image_init_stubs		(__in image_information *info);
+bool				image_init_traps		(__in image_information *info);
 
 ulong				image_sizeof			(__in pvoid addr);
 
@@ -168,7 +168,7 @@ bool				image_fix_import		(__in pvoid addr,	 __in image_information *info);
 bool				image_fix_import_for	(__in pvoid hModule, __in image_information *info);
 
 pvoid				image_copy_im			(__in image_information *info);
-void				image_copy_stubs		(__in image_information *info);
+void				image_copy_traps		(__in image_information *info);
 
 pvoid				image_to_im				(__in image_information *info);
 image_information*	image_to_information	(__in pvoid addr);
