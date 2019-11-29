@@ -6,4 +6,4 @@
 debug/
 release/
 
-/.vs
+/lib/*.lib

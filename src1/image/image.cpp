@@ -110,12 +110,12 @@ pvoid image_load(__in image_information *info)
 	time = GetCurrentTime();
 #endif
 
-	sprintf(& info->modulebasename.A[0],	"%d",					time);
-	swprintf(& info->modulebasename.W[0],	L"%d",					time);
-	sprintf(& info->modulename.A[0],		"%d.dll",				time);
-	swprintf(& info->modulename.W[0],		L"%d.dll",				time);
-	sprintf(& info->modulepath.A[0],		"C:\\fakepath\\%s",	  & info->modulename.A[0]);
-	swprintf(& info->modulepath.W[0],		L"C:\\fakepath\\%s",  & info->modulename.W[0]);
+	sprintf_s	<32>	(info->modulebasename.A,	"%d",					  time);
+	swprintf_s	<32>	(info->modulebasename.W,	_T("%d"),				  time);
+	sprintf_s	<32>	(info->modulename.A,		"%d.dll",				  time);
+	swprintf_s	<32>	(info->modulename.W,		_T("%d.dll"),			  time);
+	sprintf_s	<260>	(info->modulepath.A,		"C:\\fakepath\\%s",		& info->modulename.A[0]);
+	swprintf_s	<260>	(info->modulepath.W,		_T("C:\\fakepath\\%s"),	& info->modulename.W[0]);
 
 	info->LengthOfName = (ulong)strlen(& info->modulename.A[0]);
 	info->LengthOfPath = (ulong)strlen(& info->modulepath.A[0]);
@@ -289,7 +289,7 @@ bool image_fix_import(__in pvoid addr, __in image_information *info)
 					FunctionName = null;
 					FunctionAddr = image_proc(ModuleHandle, (LPCSTR)(_W64 ulong)(OriginTable[index].u1.Ordinal & 0x0000FFFF));
 				} else {
-					FunctionName = (LPCSTR) &(((PIMAGE_IMPORT_BY_NAME)((puchar)addr + (ulong)OriginTable[index].u1.AddressOfData))->Name[0]);
+					FunctionName = (LPCSTR) &(((PIMAGE_IMPORT_BY_NAME)((puchar)addr + OriginTable[index].u1.AddressOfData))->Name[0]);
 					FunctionAddr = image_proc(ModuleHandle, FunctionName);
 				}
 
@@ -302,7 +302,7 @@ bool image_fix_import(__in pvoid addr, __in image_information *info)
 							break;
 						}
 					}
-					FuncTable[index].u1.Function = (ulong*)(_W64 ulong)FunctionAddr;
+					FuncTable[index].u1.Function = (ulong)(_W64 ulong)FunctionAddr;
 				} else {
 					return false;
 				}
@@ -358,7 +358,7 @@ bool image_fix_import_for(__in pvoid hModule, __in image_information *info)
 			if(OriginTable[index].u1.Ordinal & IMAGE_ORDINAL_FLAG) {
 				FunctionName = null;
 			} else {
-				FunctionName = (LPCSTR) &(((PIMAGE_IMPORT_BY_NAME)((puchar)hModule + (ulong)OriginTable[index].u1.AddressOfData))->Name[0]);
+				FunctionName = (LPCSTR) &(((PIMAGE_IMPORT_BY_NAME)((puchar)hModule + OriginTable[index].u1.AddressOfData))->Name[0]);
 			}
 
 			for(i = 0; i < IMAGE_TRAP_MAX; i++) {
@@ -366,7 +366,7 @@ bool image_fix_import_for(__in pvoid hModule, __in image_information *info)
 					break;
 				} else if(info->traps[i].proc == FunctionAddr) {
 					mm_protect(& FuncTable[index].u1.Function, sizeof(pvoid), PAGE_EXECUTE_READWRITE, & OldProtect);
-					FuncTable[index].u1.Function = (ulong*)(_W64 ulong)info->traps[i].trap;
+					FuncTable[index].u1.Function = (ulong)(_W64 ulong)info->traps[i].trap;
 					mm_protect(& FuncTable[index].u1.Function, sizeof(pvoid), OldProtect, null);
 
 					image_hook_push(info, (pvoid*)& FuncTable[index].u1.Function, FunctionAddr);
@@ -581,23 +581,17 @@ bool image_hook_pop(__in image_information *info, __out image_hook *hook)
 	return true;
 }
 
-extern "C"
+PVOID LdrLoadImage(__in PVOID Buffer, __in DWORD Size, __in malloc_t m /* = NULL */, __in free_t f /* = NULL */)
 {
-	PVOID LdrLoadImage(__in PVOID Buffer, __in DWORD Size, __in malloc_t m /* = NULL */, __in free_t f /* = NULL */)
-	{
-		if(Size < PAGE_SIZE) {
-			return null;
-		}
-		return image_load(Buffer, Size, m, f);
-	}
+	return image_load(Buffer, Size, m, f);
+}
 
-	PVOID LdrGetProcAddress(__in PVOID Addr, __in LPCSTR Name)
-	{
-		return image_proc(Addr, Name);
-	}
+PVOID LdrGetProcAddress(__in PVOID Addr, __in LPCSTR Name)
+{
+	return image_proc(Addr, Name);
+}
 
-	VOID LdrFreeImage(__in PVOID Addr)
-	{
-		image_free(Addr);
-	}
-};
+VOID LdrFreeImage(__in PVOID Addr)
+{
+	image_free(Addr);
+}

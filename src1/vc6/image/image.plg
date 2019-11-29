@@ -1,0 +1,98 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: image - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP249.bat" with contents
+[
+@echo off
+ml /coff /c /Fo .\Release\GetModuleHandleW.obj .\traps\GetModuleHandleW.asm
+]
+Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP249.bat"
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24A.bat" with contents
+[
+@echo off
+ml /coff /c /Fo .\Release\GetModuleHandleA.obj .\traps\GetModuleHandleA.asm
+]
+Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24A.bat"
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24B.bat" with contents
+[
+@echo off
+ml /coff /c /Fo .\Release\GetModuleFileNameW.obj .\traps\GetModuleFileNameW.asm
+]
+Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24B.bat"
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24C.bat" with contents
+[
+@echo off
+ml /coff /c /Fo .\Release\GetModuleFileNameA.obj .\traps\GetModuleFileNameA.asm
+]
+Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24C.bat"
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24D.bat" with contents
+[
+@echo off
+ml /coff /c /Fo .\Release\GetProcAddress.obj .\traps\GetProcAddress.asm
+]
+Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24D.bat"
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24E.tmp" with contents
+[
+/nologo /ML /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /Fp"Release/image.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
+"C:\Projects\image\image.cpp"
+"C:\Projects\image\mm.cpp"
+"C:\Projects\image\pe.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24E.tmp" 
+Performing Custom Build Step on .\traps\GetModuleHandleW.asm
+Microsoft (R) Macro Assembler Version 6.14.8444
+Copyright (C) Microsoft Corp 1981-1997.  All rights reserved.
+
+ Assembling: .\traps\GetModuleHandleW.asm
+Performing Custom Build Step on .\traps\GetModuleHandleA.asm
+Microsoft (R) Macro Assembler Version 6.14.8444
+Copyright (C) Microsoft Corp 1981-1997.  All rights reserved.
+
+ Assembling: .\traps\GetModuleHandleA.asm
+Performing Custom Build Step on .\traps\GetModuleFileNameW.asm
+Microsoft (R) Macro Assembler Version 6.14.8444
+Copyright (C) Microsoft Corp 1981-1997.  All rights reserved.
+
+ Assembling: .\traps\GetModuleFileNameW.asm
+Performing Custom Build Step on .\traps\GetModuleFileNameA.asm
+Microsoft (R) Macro Assembler Version 6.14.8444
+Copyright (C) Microsoft Corp 1981-1997.  All rights reserved.
+
+ Assembling: .\traps\GetModuleFileNameA.asm
+Performing Custom Build Step on .\traps\GetProcAddress.asm
+Microsoft (R) Macro Assembler Version 6.14.8444
+Copyright (C) Microsoft Corp 1981-1997.  All rights reserved.
+
+ Assembling: .\traps\GetProcAddress.asm
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24F.tmp" with contents
+[
+/nologo /out:"Release\image.lib" 
+.\Release\image.obj
+.\Release\mm.obj
+.\Release\pe.obj
+.\Release\GetProcAddress.obj
+.\Release\GetModuleFileNameA.obj
+.\Release\GetModuleFileNameW.obj
+.\Release\GetModuleHandleA.obj
+.\Release\GetModuleHandleW.obj
+]
+Creating command line "link.exe -lib @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24F.tmp"
+<h3>Output Window</h3>
+Compiling...
+image.cpp
+mm.cpp
+pe.cpp
+Creating library...
+
+
+
+<h3>Results</h3>
+image.lib - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
