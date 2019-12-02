@@ -13,6 +13,10 @@
 
 PImageHeader ImageLoad(__IN PVOID Buffer)
 {
+	// Validate
+	if(!ImageIsValid(Buffer, IMAGE_FILE_MACHINE_SUPPORTED, IMAGE_FILE_DYNAMIC_LIBRARY)) {
+		return NULL;
+	}
 	return NULL;
 }
 

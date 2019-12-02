@@ -21,8 +21,12 @@
 #define __OUT
 #endif
 
-#ifndef __OPT
-#define __OPT
+#ifndef __IN_OPT
+#define __IN_OPT
+#endif
+
+#ifndef __OUT_OPT
+#define __OUT_OPT
 #endif
 
 #define IMAGE_MAGIC_NUMBER		0x00000000 // Magic number
