@@ -5,4 +5,6 @@
 
 #include "image.h"
 
+#define ImageIsValid ElfIsValid
+
 #endif

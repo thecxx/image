@@ -18,10 +18,10 @@
     <ClInclude Include="image.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="pe.h">
+    <ClInclude Include="elf.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="elf.h">
+    <ClInclude Include="pe.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

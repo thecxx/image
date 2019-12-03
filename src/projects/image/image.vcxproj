@@ -24,9 +24,15 @@
     <ClInclude Include="pe.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="elf.c" />
+    <ClCompile Include="elf.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="image.c" />
-    <ClCompile Include="pe.c" />
+    <ClCompile Include="pe.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

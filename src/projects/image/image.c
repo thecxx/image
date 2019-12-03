@@ -10,17 +10,51 @@
 	#error Current platform is not supported
 #endif
 
-
-PImageHeader ImageLoad(__IN PVOID Buffer)
+// Load image from buffer
+PImageHeader ImageLoad(__IN PVOID Buffer, __IN USHORT Machine, __IN USHORT FileType)
 {
+	// Image header
+	PImageHeader header  = NULL;
+	ULONG	SizeOfHeader = 0,
+			SizeOfImage  = 0;
+
 	// Validate
-	if(!ImageIsValid(Buffer, IMAGE_FILE_MACHINE_SUPPORTED, IMAGE_FILE_DYNAMIC_LIBRARY)) {
-		return NULL;
+	if (!ImageIsValid(Buffer, Machine, FileType)) {
+		RETURN_FAIL(NULL, IMAGE_ERROR_INVALID_FILE);
 	}
-	return NULL;
+
+	// Header size
+	SizeOfHeader = sizeof(ImageHeader) + ImageNumberOfHijack() * sizeof(ImageHijack);
+	// Image size
+	SizeOfImage = ImageSizeOfImage(Buffer);
+	if (SizeOfImage < PAGE_SIZE) {
+		RETURN_FAIL(NULL, IMAGE_ERROR_INVALID_FILE_SIZE);
+	}
+
+	// Alloc memory
+	header = ImageAlloc(SizeOfHeader + SizeOfImage);
+
+	header->MagicNumber		= IMAGE_HEADER_MAGIC_SIGNATURE;
+	header->SizeOfHeader	= SizeOfHeader;
+	header->SizeOfImage		= SizeOfImage;
+	header->NumberOfHijack	= ImageNumberOfHijack();
+
+	IMAGE_FIRST_HIJACK(header)->Buffer;
+
+	RETURN_SUCCESS(header);
+
+RETURN_FAIL_1:
+	ImageFree(header);
+
+
+	RETURN_FAIL(NULL, 0);
 }
 
+// Unload image
 BOOL ImageUnload(__IN PImageHeader Header)
 {
-	return TRUE;
+	if (Header->MagicNumber != IMAGE_HEADER_MAGIC_SIGNATURE) {
+		RETURN_FAIL(FALSE, IMAGE_ERROR_INVALID_HEADER);
+	}
+	RETURN_SUCCESS(TRUE);
 }
